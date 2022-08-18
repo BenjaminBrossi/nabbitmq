@@ -35,24 +35,24 @@
   },
   "homepage": "https://github.com/skif48/nabbit#readme",
   "dependencies": {
-    "@types/amqplib": "^0.5.9",
-    "@types/chai": "^4.1.7",
-    "amqplib": "^0.5.3",
-    "rxjs": "^6.4.0"
+    "@types/amqplib": "^0.8.2",
+    "@types/chai": "^4.3.3",
+    "amqplib": "^0.10.2",
+    "rxjs": "^7.5.6"
   },
   "devDependencies": {
-    "@types/mocha": "^5.2.6",
-    "@types/node": "^10.12.21",
-    "chai": "^4.2.0",
-    "coveralls": "^3.0.3",
-    "mocha": "^6.0.2",
-    "nyc": "^14.0.0",
-    "prettier": "^1.16.4",
-    "sinon": "^7.3.0",
-    "ts-mocha": "^6.0.0",
-    "ts-node": "^8.0.2",
-    "tslint": "^5.12.1",
-    "tslint-config-prettier": "^1.17.0",
-    "typescript": "^3.3.1"
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^18.7.6",
+    "chai": "^4.3.6",
+    "coveralls": "^3.1.1",
+    "mocha": "^10.0.0",
+    "nyc": "^15.1.0",
+    "prettier": "^2.7.1",
+    "sinon": "^14.0.0",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.1",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.7.4"
   }
 }

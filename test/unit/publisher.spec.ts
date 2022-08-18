@@ -2,13 +2,19 @@ import * as amqp from 'amqplib';
 import { expect } from 'chai';
 import { timeout } from 'rxjs/operators';
 import * as sinon from 'sinon';
-import { Publisher, PublisherConfigs, PublisherFactory, RabbitMqConnection, RabbitMqConnectionFactory } from '../../src';
+import {
+  Publisher,
+  PublisherConfigs,
+  PublisherFactory,
+  RabbitMqConnection,
+  RabbitMqConnectionFactory,
+} from '../../src';
 import { RabbitMqReconnectError } from '../../src/errors/rabbitmq-reconnect.error';
 
 const noop = () => {};
 const amqpChannelStub = {
   assertExchange: noop,
-  assertQueue: () => Promise.resolve({queue: 'queue'}),
+  assertQueue: () => Promise.resolve({ queue: 'queue' }),
   bindQueue: noop,
   prefetch: noop,
   consume: noop,
@@ -226,7 +232,7 @@ describe('Publisher unit tests', () => {
         exchange: {
           name: 'test_exchange',
           options: {
-            arguments: {some: 'key'},
+            arguments: { some: 'key' },
           },
         },
       };
@@ -266,12 +272,10 @@ describe('Publisher unit tests', () => {
 
     afterEach(() => {
       Object.keys(amqpChannelStub).forEach((key) => {
-        if (amqpChannelStub[key].restore)
-          amqpChannelStub[key].restore();
+        if (amqpChannelStub[key].restore) amqpChannelStub[key].restore();
       });
       Object.keys(amqpConnectionStub).forEach((key) => {
-        if (amqpConnectionStub[key].restore)
-          amqpConnectionStub[key].restore();
+        if (amqpConnectionStub[key].restore) amqpConnectionStub[key].restore();
       });
     });
 
@@ -328,6 +332,8 @@ describe('Publisher unit tests', () => {
 
     afterEach(() => {
       amqp.connect['restore']();
+      RabbitMqConnectionFactory.prototype.newConnection['restore'] &&
+        RabbitMqConnectionFactory.prototype.newConnection['restore']();
     });
 
     it('should use uri to reconnect, if provided', async () => {
@@ -391,11 +397,7 @@ describe('Publisher unit tests', () => {
       sinon.stub(publisher, 'init').callsFake(() => Promise.reject());
 
       try {
-        await publisher.reconnect()
-          .pipe(
-            timeout(1200),
-          )
-          .toPromise();
+        await publisher.reconnect().pipe(timeout(1200)).toPromise();
       } catch (err) {}
 
       expect(newConnectionSpy.callCount).to.be.equal(4);

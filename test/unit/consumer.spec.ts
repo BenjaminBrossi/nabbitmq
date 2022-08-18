@@ -1,5 +1,6 @@
 import * as amqp from 'amqplib';
 import { expect } from 'chai';
+import { firstValueFrom } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import * as sinon from 'sinon';
 import { Consumer, ConsumerConfigs, ConsumerFactory, RabbitMqConnection, RabbitMqConnectionFactory } from '../../src';
@@ -9,7 +10,7 @@ import { RabbitMqConsumerSetupFunction } from '../../src/interfaces/rabbit-mq-se
 const noop = () => {};
 const amqpChannelStub = {
   assertExchange: noop,
-  assertQueue: () => Promise.resolve({queue: 'queue'}),
+  assertQueue: () => Promise.resolve({ queue: 'queue' }),
   bindQueue: noop,
   prefetch: noop,
   consume: noop,
@@ -130,7 +131,7 @@ describe('Consumer unit tests', () => {
         queue: {
           name: 'my_queue',
           options: {
-            arguments: {some: 'key'},
+            arguments: { some: 'key' },
           },
         },
       };
@@ -145,7 +146,7 @@ describe('Consumer unit tests', () => {
           name: 'my_queue',
           options: {
             durable: true,
-            arguments: {some: 'key'},
+            arguments: { some: 'key' },
           },
           bindingPattern: 'my_queue_rk',
         },
@@ -296,7 +297,7 @@ describe('Consumer unit tests', () => {
         exchange: {
           name: 'exchange',
           options: {
-            arguments: {some: 'key'},
+            arguments: { some: 'key' },
           },
         },
       };
@@ -318,7 +319,7 @@ describe('Consumer unit tests', () => {
           name: 'exchange',
           options: {
             durable: true,
-            arguments: {some: 'key'},
+            arguments: { some: 'key' },
           },
           type: 'direct',
         },
@@ -1213,12 +1214,10 @@ describe('Consumer unit tests', () => {
 
     afterEach(() => {
       Object.keys(amqpChannelStub).forEach((key) => {
-        if (amqpChannelStub[key].restore)
-          amqpChannelStub[key].restore();
+        if (amqpChannelStub[key].restore) amqpChannelStub[key].restore();
       });
       Object.keys(amqpConnectionStub).forEach((key) => {
-        if (amqpConnectionStub[key].restore)
-          amqpConnectionStub[key].restore();
+        if (amqpConnectionStub[key].restore) amqpConnectionStub[key].restore();
       });
     });
 
@@ -1294,20 +1293,19 @@ describe('Consumer unit tests', () => {
 
     afterEach(() => {
       Object.keys(amqpChannelStub).forEach((key) => {
-        if (amqpChannelStub[key].restore)
-          amqpChannelStub[key].restore();
+        if (amqpChannelStub[key].restore) amqpChannelStub[key].restore();
       });
       Object.keys(amqpConnectionStub).forEach((key) => {
-        if (amqpConnectionStub[key].restore)
-          amqpConnectionStub[key].restore();
+        if (amqpConnectionStub[key].restore) amqpConnectionStub[key].restore();
       });
     });
 
     it('should successfully setup consumer with custom setup function', async () => {
-      const customSetupFunction: RabbitMqConsumerSetupFunction = () => Promise.resolve({
-        channel: amqpChannelStub as any,
-        queue: 'queue',
-      });
+      const customSetupFunction: RabbitMqConsumerSetupFunction = () =>
+        Promise.resolve({
+          channel: amqpChannelStub as any,
+          queue: 'queue',
+        });
 
       const customSetupFunctionSpy = sinon.spy(customSetupFunction);
 
@@ -1329,6 +1327,8 @@ describe('Consumer unit tests', () => {
 
     afterEach(() => {
       amqp.connect['restore']();
+      RabbitMqConnectionFactory.prototype.newConnection['restore'] &&
+        RabbitMqConnectionFactory.prototype.newConnection['restore']();
     });
 
     it('should use uri to reconnect, if provided', async () => {
@@ -1392,11 +1392,7 @@ describe('Consumer unit tests', () => {
       sinon.stub(consumer, 'init').callsFake(() => Promise.reject());
 
       try {
-        await consumer.reconnect()
-          .pipe(
-            timeout(1200),
-          )
-          .toPromise();
+        await firstValueFrom(consumer.reconnect().pipe(timeout(1200)));
       } catch (err) {}
 
       expect(newConnectionSpy.callCount).to.be.equal(4);
